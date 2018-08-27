@@ -19,13 +19,6 @@
             <RowDefinition Height="93" />
             <RowDefinition Height="0*" />
         </Grid.RowDefinitions>
-        <Image Grid.RowSpan="3"
-               gif:ImageBehavior.AnimatedSource="Images\caramelldancen.gif" 
-               Name="BackGroundImage" 
-               Visibility="Visible" 
-               Stretch="Fill" 
-               RenderTransformOrigin="0.498,0.49" >
-        </Image>
         <Label Name="EnterTextLabel" 
                Content="Enter a text" 
                HorizontalAlignment="Left" 

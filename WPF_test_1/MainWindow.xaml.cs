@@ -24,70 +24,11 @@ namespace WPF_test_1
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    ///
+
     public partial class MainWindow : Window
     {
         private SoundPlayer soundPlayCaramelldancen;
-
-        private class StringProcessor
-        {
-            String inputString;
-            char oldChar, newChar;
-            String[] outputStrings;
-
-            public StringProcessor(String inputText, char oldLetter, char newLetter, String[] outputText)
-            {
-                inputString = inputText;
-                oldChar = oldLetter;
-                newChar = newLetter;
-                outputStrings = outputText;
-            }
-
-            private void CountNumChar() //The method that counts the number of characters
-            {
-                String[] listBoxStrings = new String[MainWindow.OutputListBox.Items.Count]; //Create buffer list of string of list box
-                for (int count = 0; count < listBoxStrings.Length; count++)
-                {
-                    listBoxStrings[count] = Convert.ToString(OutputListBox.Items[count]); //Fills the buffer array with strings of list box
-                }
-                OutputListBox.Items.Clear(); //Clear list box items
-                OutputListBox.Items.Add("Characters count: " + Convert.ToString(InputStringTextBox.Text.Length)); //Adding new items that contain characters count
-                for (int count = 0; count < listBoxStrings.Length; count++)
-                {
-                    OutputListBox.Items.Add(listBoxStrings[count]); //Add items from buffer list
-                }
-            }
-
-            private void CountNumWords() //The method that counts the number of words
-            {
-                String[] listBoxStrings = new String[OutputListBox.Items.Count]; //Create buffer list of string of list box
-                for (int count = 0; count < listBoxStrings.Length; count++)
-                {
-                    listBoxStrings[count] = Convert.ToString(OutputListBox.Items[count]); //Fills the buffer array with strings of list box
-                }
-                OutputListBox.Items.Clear(); //Clear list box items
-                String[] words = InputStringTextBox.Text.Split(' ', ',', '.', '\n', '\t', '\r'); //Splitting string from InputStringTextBox to array of string
-                OutputListBox.Items.Add("Words count: " + Convert.ToString(words.Length)); //Adding new items that contain characters count
-                for (int count = 0; count < listBoxStrings.Length; count++)
-                {
-                    OutputListBox.Items.Add(listBoxStrings[count]); //Fills the buffer array with strings of list box
-                }
-            }
-
-            private void ReplaceChars() //The method that replace characters
-            {
-                String[] listBoxStrings = new String[OutputListBox.Items.Count]; //Create buffer list of string of list box
-                for (int count = 0; count < listBoxStrings.Length; count++)
-                {
-                    listBoxStrings[count] = Convert.ToString(OutputListBox.Items[count]); //Fills the buffer array with strings of list box
-                }
-                OutputListBox.Items.Clear(); //Clear list box items
-                OutputListBox.Items.Add("String after repalce: " + InputStringTextBox.Text.Replace(OldCharTextBox.Text, NewCharTextBox.Text)); //Adding new items that contain changed string
-                for (int count = 0; count < listBoxStrings.Length; count++)
-                {
-                    OutputListBox.Items.Add(listBoxStrings[count]); //Fills the buffer array with strings of list box
-                }
-            }
-        }
 
         public MainWindow()
         {
@@ -119,27 +60,27 @@ namespace WPF_test_1
 
         private void ExecuteButton_Click(object sender, RoutedEventArgs e)//The method that processes the click on the "execute" button
         {
+            StringProcessor stringProcessor = new StringProcessor();
+
             if (MainWindowForm.MinHeight != 500)
             {
                 MainGrid.RowDefinitions[2].Height = new GridLength(100); //Makes visible output list box
                 MainWindowForm.MinHeight = 500; //Increases the minimum height of the main window
             }
 
-            StringProcessor processString = new StringProcessor();
-
             if (CountNumCharRadioButton.IsChecked == true)
             {
-                MenuItems.CountNumChar(); //Counts the number of characters
+                RefreshStringValues(stringProcessor.CountNumChar(InputStringTextBox.Text)); //Counts the number of characters
             }
 
             if (CountNumWordsRadioButton.IsChecked == true)
             {
-                MenuItems.CountNumWords(); //Counts the number of words
+                RefreshStringValues(stringProcessor.CountNumWords(InputStringTextBox.Text)); //Counts the number of words
             }
 
             if (RepСharRadioButton.IsChecked == true)
             {
-                MenuItems.ReplaceChars(); //Replace characters
+                RefreshStringValues(stringProcessor.ReplaceChars(InputStringTextBox.Text, OldCharTextBox.Text[0], NewCharTextBox.Text[0])); //Replace characters
             }
         }
 
@@ -184,6 +125,45 @@ namespace WPF_test_1
             foreach (string filename in filenames)
                 InputStringTextBox.Text += File.ReadAllText(filename); //Add text from file to InputStringTextBox
             e.Handled = true;
+        }
+
+        private void RefreshStringValues(String processedText)
+        {
+            String[] listBoxStrings = new String[OutputListBox.Items.Count]; //Create buffer list of string of list box
+            for (int count = 0; count < listBoxStrings.Length; count++)
+            {
+                listBoxStrings[count] = Convert.ToString(OutputListBox.Items[count]); //Fills the buffer array with strings of list box
+            }
+            OutputListBox.Items.Clear(); //Clear list box items
+            OutputListBox.Items.Add(processedText); //Adding new items that contain characters count
+            for (int count = 0; count < listBoxStrings.Length; count++)
+            {
+                OutputListBox.Items.Add(listBoxStrings[count]); //Add items from buffer list
+            }
+        }
+    }
+
+    public class StringProcessor
+    {
+        private MainWindow mainWindow = new MainWindow();
+
+        public String CountNumChar(String inputText) //The method that counts the number of characters
+        {
+            String processedText = "Characters count: " + Convert.ToString(inputText.Length); //Adding new items that contain characters count
+            return processedText;
+        }
+
+        public String CountNumWords(String inputText) //The method that counts the number of words
+        {
+            String[] words = inputText.Split(' ', ',', '.', '\n', '\t', '\r'); //Splitting string from InputStringTextBox to array of string
+            String processedText = "Words count: " + Convert.ToString(words.Length); //Adding new items that contain characters count
+            return processedText;
+        }
+
+        public String ReplaceChars(String inputText, char oldChar, char newChar) //The method that replace characters
+        {
+            String processedText = "String after repalce: " + inputText.Replace(oldChar, newChar); //Adding new items that contain changed string
+            return processedText;
         }
     }
 }
